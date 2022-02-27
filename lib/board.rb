@@ -1,9 +1,11 @@
 require './lib/field.rb'
 require './lib/pieces/pawn.rb'
 require './lib/field_filler.rb'
+require './lib/move_validator.rb'
 
 class Board
   include FieldFiller
+  include MoveValidator
 
   attr_accessor :board, :root
 
@@ -88,7 +90,7 @@ class Board
   def find_field(field_coordinates)
     root = @root
     count = 0
-    until count == 9
+    until count == 8
       until root.nil?
         return root if root.coordinate == field_coordinates
 
@@ -103,9 +105,20 @@ class Board
     end
   end
 
+  # at the moment only working for pawn, and made only for pawn
   def move_piece(start_field, destination_field)
-    destination_field.piece = start_field.piece
-    start_field.piece = nil
+    p "destination is: #{destination_field}"
+    get_valid_pawn_move(start_field.piece, start_field) if start_field.piece.class <= Pawn
+    possible_moves = walkable_fields(start_field)
+    puts 'possible moves'
+    possible_moves.each { |e| p e.coordinate }
+    if possible_moves.include?(destination_field) && !destination_field.nil?
+      destination_field.piece = start_field.piece
+      start_field.piece = nil
+      destination_field.piece.moved = true if destination_field.piece.class <= Pawn
+    else
+      'error'
+    end
   end
 end
 
@@ -114,7 +127,30 @@ b = Board.new
 # p b.root.right_field.right_field.right_field.right_field.right_field.right_field.right_field
 print b.root.right_field
 # b.print_board
-b.move_piece(b.find_field([1, 0]), b.find_field([2, 0]))
+b.move_piece(b.find_field([1, 1]), b.find_field([3, 1]))
+b.move_piece(b.find_field([1, 3]), b.find_field([3, 3]))
+b.move_piece(b.find_field([6, 0]), b.find_field([4, 0]))
+b.move_piece(b.find_field([6, 2]), b.find_field([4, 2]))
+
+b.find_field([1, 0]).piece = nil
+p b.move_piece(b.find_field([0, 0]), b.find_field([2, 0]))
+p b.move_piece(b.find_field([2, 0]), b.find_field([2, 3]))
+p b.move_piece(b.find_field([2, 3]), b.find_field([2, 7]))
+p b.move_piece(b.find_field([2, 7]), b.find_field([6, 7]))
+p b.move_piece(b.find_field([6, 7]), b.find_field([7, 7]))
+p b.move_piece(b.find_field([7, 7]), b.find_field([7, 5]))
+
+p b.move_piece(b.find_field([7, 0]), b.find_field([5, 0]))
+p b.move_piece(b.find_field([5, 0]), b.find_field([5, 5]))
+p b.move_piece(b.find_field([5, 5]), b.find_field([5, 4]))
+p b.move_piece(b.find_field([5, 4]), b.find_field([0, 4]))
+# b.move_piece(b.find_field([7, 5]), b.find_field([7, 3]))
+# b.move_piece(b.find_field([3, 0]), b.find_field([4, 0]))
+# b.move_piece(b.find_field([4, 2]), b.find_field([3, 3]))
+# b.move_piece(b.find_field([3, 1]), b.find_field([4, 0]))
+# b.move_piece(b.find_field([6, 1]), b.find_field([4, 1]))
+# b.move_piece(b.find_field([3, 0]), b.find_field([4, 1]))
+# b.move_piece(b.find_field([4, 1]), b.find_field([3, 0]))
 b.print_board
 # p b.find_field([7, 7]).coordinate
 # p b.root.top_field.right_field.top_field.left_field.coordinate

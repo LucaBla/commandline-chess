@@ -18,7 +18,8 @@ class Field
   end
 
   def set_color
-    return '100' if (coordinate[0].even? && coordinate[1].even?) || (!coordinate[0].even? && !coordinate[1].even?) 
-    return '106'
+    return '100' if (coordinate[0].even? && coordinate[1].even?) || (!coordinate[0].even? && !coordinate[1].even?)
+
+    '106'
   end
 end

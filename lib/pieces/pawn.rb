@@ -1,32 +1,31 @@
 require './lib/pieces/piece.rb'
 
+BLACK = "\e[30m"
+WHITE = ""
 class Pawn < Piece
-  attr_reader :model
+  attr_accessor :moved, :moves
+  attr_reader :model, :color
 
   def initialize
     super
     @model = "\u265f"
     @moved = false
-  end
-
-  def moves
-    top = 1
-    top = [1, 2] if @moved == false
-
-    { top: top, bottom: 0, left: 0, right: 0 }
+    @moves = {}
   end
 end
 
 class BlackPawn < Pawn
   def initialize
     super
-    @model = "\e[30m\u265f"
+    @color = BLACK
+    @model = "#{@color}\u265f"
   end
 end
 
 class WhitePawn < Pawn
   def initialize
     super
+    @color = WHITE
     @model = "\u265f"
   end
 end
