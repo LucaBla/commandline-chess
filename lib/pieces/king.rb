@@ -4,6 +4,8 @@ class King < Piece
   def initialize
     super
     @model = "\u265a"
+    @moves = { top_left: [1], top: [1], top_right: [1],
+               bottom_left: [1], bottom: [1], bottom_right: [1], left: [1], right: [1] }
   end
 end
 

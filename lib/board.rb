@@ -2,6 +2,7 @@ require './lib/field.rb'
 require './lib/pieces/pawn.rb'
 require './lib/field_filler.rb'
 require './lib/move_validator.rb'
+require './lib/pieces/red_dot.rb'
 
 class Board
   include FieldFiller
@@ -12,6 +13,7 @@ class Board
   def initialize
     @root = Field.new([0, 0])
     @board = create_board
+    @walkable_fields = []
   end
 
   def print_board
@@ -33,8 +35,10 @@ class Board
 
   def print_field(field)
     piece = ' '
-    piece = field.piece.model unless field.piece.nil?
-    print "\e[#{field.color}m #{piece}  \e[0m"
+    piece = field.piece.model unless field.piece.nil? || !field.piece <=> RedDot
+    color = field.color unless field.capturable
+    color = '41' if field.capturable
+    print "\e[#{color}m #{piece}  \e[0m"
   end
 
   def create_board
@@ -97,7 +101,6 @@ class Board
         root = root.top_field
       end
       count += 1
-
       root = @root
       count.times do
         root = root.right_field
@@ -107,11 +110,7 @@ class Board
 
   # at the moment only working for pawn, and made only for pawn
   def move_piece(start_field, destination_field)
-    p "destination is: #{destination_field}"
-    get_valid_pawn_move(start_field.piece, start_field) if start_field.piece.class <= Pawn
     possible_moves = walkable_fields(start_field)
-    puts 'possible moves'
-    possible_moves.each { |e| p e.coordinate }
     if possible_moves.include?(destination_field) && !destination_field.nil?
       destination_field.piece = start_field.piece
       start_field.piece = nil
@@ -119,6 +118,25 @@ class Board
     else
       'error'
     end
+  end
+
+  def show_walkable_fields(start_field)
+    return 'error' if start_field.piece.nil?
+
+    possible_moves = walkable_fields(start_field)
+    possible_moves.each do |e|
+      e.capturable = true unless e.piece.nil?
+      e.piece = RedDot.new if e.piece.nil?
+      @walkable_fields.push(e)
+    end
+  end
+
+  def delete_walkable_fields
+    @walkable_fields.each do |e|
+      e.capturable = false
+      e.piece = nil if e.piece.class <= RedDot
+    end
+    @walkable_fields = []
   end
 end
 
@@ -144,6 +162,34 @@ p b.move_piece(b.find_field([7, 0]), b.find_field([5, 0]))
 p b.move_piece(b.find_field([5, 0]), b.find_field([5, 5]))
 p b.move_piece(b.find_field([5, 5]), b.find_field([5, 4]))
 p b.move_piece(b.find_field([5, 4]), b.find_field([0, 4]))
+
+# p b.move_piece(b.find_field([0, 2]), b.find_field([2, 4]))
+# p b.move_piece(b.find_field([2, 4]), b.find_field([4, 2]))
+
+p b.move_piece(b.find_field([0, 3]), b.find_field([0, 2]))
+p b.move_piece(b.find_field([0, 2]), b.find_field([1, 1]))
+
+p b.move_piece(b.find_field([0, 4]), b.find_field([2, 2]))
+p b.move_piece(b.find_field([2, 2]), b.find_field([4, 2]))
+
+p b.move_piece(b.find_field([6, 5]), b.find_field([4, 5]))
+p b.move_piece(b.find_field([6, 1]), b.find_field([5, 1]))
+
+p b.move_piece(b.find_field([1, 4]), b.find_field([2, 4]))
+p b.move_piece(b.find_field([3, 3]), b.find_field([4, 3]))
+p b.move_piece(b.find_field([1, 7]), b.find_field([2, 7]))
+
+# b.show_walkable_fields(b.find_field([0, 1]))
+p b.move_piece(b.find_field([0, 6]), b.find_field([2, 5]))
+b.show_walkable_fields(b.find_field([2, 5]))
+
+# b.show_walkable_fields(b.find_field([1, 5]))
+# b.print_board
+# puts
+# b.show_walkable_fields(b.find_field([4, 0]))
+# b.show_walkable_fields(b.find_field([7, 2]))
+# b.show_walkable_fields(b.find_field([5, 4]))
+
 # b.move_piece(b.find_field([7, 5]), b.find_field([7, 3]))
 # b.move_piece(b.find_field([3, 0]), b.find_field([4, 0]))
 # b.move_piece(b.find_field([4, 2]), b.find_field([3, 3]))
@@ -152,6 +198,9 @@ p b.move_piece(b.find_field([5, 4]), b.find_field([0, 4]))
 # b.move_piece(b.find_field([3, 0]), b.find_field([4, 1]))
 # b.move_piece(b.find_field([4, 1]), b.find_field([3, 0]))
 b.print_board
+# b.delete_walkable_fields
+# puts
+# b.print_board
 # p b.find_field([7, 7]).coordinate
 # p b.root.top_field.right_field.top_field.left_field.coordinate
 # puts b.board

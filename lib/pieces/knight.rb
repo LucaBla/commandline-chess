@@ -4,6 +4,8 @@ class Knight < Piece
   def initialize
     super
     @model = "\u265e"
+    @moves = { top_left: [0], top: [1, 2], top_right: [0],
+               bottom_left: [0], bottom: [1, 2], bottom_right: [0], left: [2, 1], right: [2, 1] }
   end
 end
 

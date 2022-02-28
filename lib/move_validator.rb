@@ -3,8 +3,10 @@ module MoveValidator
   WHITE = ""
 
   def walkable_fields(start_field)
+    get_valid_pawn_move(start_field.piece, start_field) if start_field.piece.class <= Pawn
     moves = start_field.piece.moves.reject { |_, value| value == [0] }
-    start_field.piece.color == WHITE ? allowed_fields = return_white_allowed_field(start_field, moves) : allowed_fields = return_black_allowed_field(start_field, moves)
+    start_field.piece.color == WHITE ? allowed_fields = return_white_allowed_field(start_field, moves)
+                                     : allowed_fields = return_black_allowed_field(start_field, moves)
     clear_allowed_fields(allowed_fields, start_field)
   end
 
@@ -16,7 +18,27 @@ module MoveValidator
     allowed_fields
   end
 
+  def knight_allowed_fields(start_field, moves)
+    allowed_fields = []
+    plus = :+
+    minus = :-
+    2.times do |e|
+      allowed_fields.push(find_field([start_field.coordinate[0].public_send(plus, moves[:top][e]),
+                                      start_field.coordinate[1].public_send(minus, moves[:left][e])]))
+      allowed_fields.push(find_field([start_field.coordinate[0].public_send(minus, moves[:top][e]),
+                                      start_field.coordinate[1].public_send(minus, moves[:left][e])]))
+      allowed_fields.push(find_field([start_field.coordinate[0].public_send(plus, moves[:top][e]),
+                                      start_field.coordinate[1].public_send(plus, moves[:left][e])]))
+      allowed_fields.push(find_field([start_field.coordinate[0].public_send(minus, moves[:top][e]),
+                                      start_field.coordinate[1].public_send(plus, moves[:left][e])]))
+    end
+
+    allowed_fields
+  end
+
   def return_white_allowed_field(start_field, moves)
+    return knight_allowed_fields(start_field, moves) if start_field.piece.class <= Knight
+
     allowed_fields = []
     moves.each do |key, value|
       behind_piece = false
@@ -95,14 +117,14 @@ module MoveValidator
           behind_piece = true unless allowed_fields[allowed_fields.length - 1].piece.nil?
         end
       when :top_right
-        value.each do |_|
+        value.each do |v|
           allowed_fields.push(find_field([start_field.coordinate[0] - v, start_field.coordinate[1] - v])) unless behind_piece
           next if allowed_fields[allowed_fields.length - 1].nil?
 
           behind_piece = true unless allowed_fields[allowed_fields.length - 1].piece.nil?
         end
       when :top_left
-        value.each do |_|
+        value.each do |v|
           allowed_fields.push(find_field([start_field.coordinate[0] - v, start_field.coordinate[1] + v])) unless behind_piece
           next if allowed_fields[allowed_fields.length - 1].nil?
 

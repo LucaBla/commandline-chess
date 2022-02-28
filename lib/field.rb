@@ -1,6 +1,5 @@
 class Field
-  attr_reader :color
-  attr_accessor :coordinate, :piece, :top_field, :bottom_field, :left_field, :right_field
+  attr_accessor :coordinate, :piece, :color, :top_field, :bottom_field, :left_field, :right_field, :capturable
 
   def initialize(coordinate = [nil, nil])
     @piece = nil
@@ -11,6 +10,8 @@ class Field
     @bottom_field = nil
     @left_field = nil
     @right_field = nil
+
+    @capturable = false
   end
 
   def to_s

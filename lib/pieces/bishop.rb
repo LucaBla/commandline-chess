@@ -4,6 +4,8 @@ class Bishop < Piece
   def initialize
     super
     @model = "\u265d"
+    @moves = { top_left: (1..7).to_a, top: [0], top_right: (1..7).to_a,
+               bottom_left: (1..7).to_a, bottom: [0], bottom_right: (1..7).to_a, left: [0], right: [0] }
   end
 end
 
