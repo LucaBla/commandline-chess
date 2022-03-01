@@ -19,11 +19,13 @@ class Board
   def print_board
     root = @root
     root = root.top_field until root.top_field.nil?
-    8.times do
+    (0..7).reverse_each do |i|
+      print "#{i} "
       print_row(root)
       print "\n"
       root = root.bottom_field
     end
+    print "   a   b   c   d   e   f   g   h\n"
   end
 
   def print_row(root = @root)
@@ -108,8 +110,26 @@ class Board
     end
   end
 
-  # at the moment only working for pawn, and made only for pawn
+  def find_all_team_pieces(color)
+    team = []
+    root = @root
+    count = 0
+    until count == 8
+      until root.nil?
+        team.push(root) if !root.piece.nil? && root.piece.color == color
+        root = root.top_field
+      end
+      count += 1
+      root = @root
+      count.times do
+        root = root.right_field
+      end
+    end
+    team
+  end
+
   def move_piece(start_field, destination_field)
+    delete_walkable_fields
     possible_moves = walkable_fields(start_field)
     if possible_moves.include?(destination_field) && !destination_field.nil?
       destination_field.piece = start_field.piece
@@ -121,6 +141,7 @@ class Board
   end
 
   def show_walkable_fields(start_field)
+    start_field = find_field(start_field)
     return 'error' if start_field.piece.nil?
 
     possible_moves = walkable_fields(start_field)
@@ -131,6 +152,21 @@ class Board
     end
   end
 
+  def putting_check?(color)
+    team = find_all_team_pieces(color)
+    team.each do |piece_field|
+      possible_moves = walkable_fields(piece_field)
+      possible_moves.each do |move|
+        if move.piece.class <= King
+          if move.piece.color != color
+            return true
+          end
+        end
+      end
+    end
+    false
+  end
+
   def delete_walkable_fields
     @walkable_fields.each do |e|
       e.capturable = false
@@ -139,68 +175,3 @@ class Board
     @walkable_fields = []
   end
 end
-
-b = Board.new
-# p b.board.top_field.coordinate
-# p b.root.right_field.right_field.right_field.right_field.right_field.right_field.right_field
-print b.root.right_field
-# b.print_board
-b.move_piece(b.find_field([1, 1]), b.find_field([3, 1]))
-b.move_piece(b.find_field([1, 3]), b.find_field([3, 3]))
-b.move_piece(b.find_field([6, 0]), b.find_field([4, 0]))
-b.move_piece(b.find_field([6, 2]), b.find_field([4, 2]))
-
-b.find_field([1, 0]).piece = nil
-p b.move_piece(b.find_field([0, 0]), b.find_field([2, 0]))
-p b.move_piece(b.find_field([2, 0]), b.find_field([2, 3]))
-p b.move_piece(b.find_field([2, 3]), b.find_field([2, 7]))
-p b.move_piece(b.find_field([2, 7]), b.find_field([6, 7]))
-p b.move_piece(b.find_field([6, 7]), b.find_field([7, 7]))
-p b.move_piece(b.find_field([7, 7]), b.find_field([7, 5]))
-
-p b.move_piece(b.find_field([7, 0]), b.find_field([5, 0]))
-p b.move_piece(b.find_field([5, 0]), b.find_field([5, 5]))
-p b.move_piece(b.find_field([5, 5]), b.find_field([5, 4]))
-p b.move_piece(b.find_field([5, 4]), b.find_field([0, 4]))
-
-# p b.move_piece(b.find_field([0, 2]), b.find_field([2, 4]))
-# p b.move_piece(b.find_field([2, 4]), b.find_field([4, 2]))
-
-p b.move_piece(b.find_field([0, 3]), b.find_field([0, 2]))
-p b.move_piece(b.find_field([0, 2]), b.find_field([1, 1]))
-
-p b.move_piece(b.find_field([0, 4]), b.find_field([2, 2]))
-p b.move_piece(b.find_field([2, 2]), b.find_field([4, 2]))
-
-p b.move_piece(b.find_field([6, 5]), b.find_field([4, 5]))
-p b.move_piece(b.find_field([6, 1]), b.find_field([5, 1]))
-
-p b.move_piece(b.find_field([1, 4]), b.find_field([2, 4]))
-p b.move_piece(b.find_field([3, 3]), b.find_field([4, 3]))
-p b.move_piece(b.find_field([1, 7]), b.find_field([2, 7]))
-
-# b.show_walkable_fields(b.find_field([0, 1]))
-p b.move_piece(b.find_field([0, 6]), b.find_field([2, 5]))
-b.show_walkable_fields(b.find_field([2, 5]))
-
-# b.show_walkable_fields(b.find_field([1, 5]))
-# b.print_board
-# puts
-# b.show_walkable_fields(b.find_field([4, 0]))
-# b.show_walkable_fields(b.find_field([7, 2]))
-# b.show_walkable_fields(b.find_field([5, 4]))
-
-# b.move_piece(b.find_field([7, 5]), b.find_field([7, 3]))
-# b.move_piece(b.find_field([3, 0]), b.find_field([4, 0]))
-# b.move_piece(b.find_field([4, 2]), b.find_field([3, 3]))
-# b.move_piece(b.find_field([3, 1]), b.find_field([4, 0]))
-# b.move_piece(b.find_field([6, 1]), b.find_field([4, 1]))
-# b.move_piece(b.find_field([3, 0]), b.find_field([4, 1]))
-# b.move_piece(b.find_field([4, 1]), b.find_field([3, 0]))
-b.print_board
-# b.delete_walkable_fields
-# puts
-# b.print_board
-# p b.find_field([7, 7]).coordinate
-# p b.root.top_field.right_field.top_field.left_field.coordinate
-# puts b.board

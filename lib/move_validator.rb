@@ -3,6 +3,8 @@ module MoveValidator
   WHITE = ""
 
   def walkable_fields(start_field)
+    return if start_field == nil
+
     get_valid_pawn_move(start_field.piece, start_field) if start_field.piece.class <= Pawn
     moves = start_field.piece.moves.reject { |_, value| value == [0] }
     start_field.piece.color == WHITE ? allowed_fields = return_white_allowed_field(start_field, moves)
@@ -105,6 +107,8 @@ module MoveValidator
   end
 
   def return_black_allowed_field(start_field, moves)
+    return knight_allowed_fields(start_field, moves) if start_field.piece.class <= Knight
+
     allowed_fields = []
     moves.each do |key, value|
       behind_piece = false
