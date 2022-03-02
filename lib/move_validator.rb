@@ -2,20 +2,49 @@ module MoveValidator
   BLACK = "\e[30m"
   WHITE = ""
 
-  def walkable_fields(start_field)
-    return if start_field == nil
+  def walkable_fields(start_field, first_king = true)
+    return if start_field.nil? || start_field.piece.nil?
 
     get_valid_pawn_move(start_field.piece, start_field) if start_field.piece.class <= Pawn
     moves = start_field.piece.moves.reject { |_, value| value == [0] }
     start_field.piece.color == WHITE ? allowed_fields = return_white_allowed_field(start_field, moves)
                                      : allowed_fields = return_black_allowed_field(start_field, moves)
-    clear_allowed_fields(allowed_fields, start_field)
+    clear_allowed_fields(allowed_fields, start_field, first_king)
   end
 
-  def clear_allowed_fields(allowed_fields, start_field)
+  def clear_allowed_fields(allowed_fields, start_field, first_king = true)
     allowed_fields.reject! { |e| e.nil? }
     allowed_fields.reject! do |e|
       e.piece.color == start_field.piece.color unless e.nil? || e.piece.nil?
+    end
+    if start_field.piece.class <= King && first_king == true
+      puts start_field.piece
+      color = WHITE if start_field.piece.color == BLACK
+      color = BLACK if start_field.piece.color == WHITE
+      p color
+      team = find_all_team_pieces(color)
+      enemy_possible_moves = []
+      king = start_field.piece
+      deleted_pieces = []
+      # removes pieces that are fields the king could enter to check if he would be check-mate if he enters them
+      allowed_fields.each do |e|
+        if e.piece != nil && e.piece.color != king.color
+          deleted_pieces.push([e.coordinate, e.piece])
+          e.piece = nil
+        end
+      end
+      team.each do |piece_field|
+        start_field.piece = nil
+        enemy_possible_moves += walkable_fields(piece_field, false) if !walkable_fields(piece_field, false).nil?
+      end
+      # adds the moves of the deleted pieces to enemy_possible_moves
+      deleted_pieces.each do |e|
+        field = find_field(e[0])
+        field.piece = e[1]
+        enemy_possible_moves += walkable_fields(field, false)
+      end
+      start_field.piece = king
+      allowed_fields.reject! { |e| enemy_possible_moves.include?(e) }
     end
     allowed_fields
   end

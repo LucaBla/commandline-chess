@@ -8,12 +8,14 @@ class Board
   include FieldFiller
   include MoveValidator
 
-  attr_accessor :board, :root
+  attr_accessor :board, :root, :last_deleted_piece, :checker
 
   def initialize
     @root = Field.new([0, 0])
     @board = create_board
     @walkable_fields = []
+    @last_deleted_piece = nil
+    @checker = []
   end
 
   def print_board
@@ -132,12 +134,17 @@ class Board
     delete_walkable_fields
     possible_moves = walkable_fields(start_field)
     if possible_moves.include?(destination_field) && !destination_field.nil?
-      destination_field.piece = start_field.piece
-      start_field.piece = nil
+      @last_deleted_piece = destination_field.piece
+      force_move(start_field, destination_field)
       destination_field.piece.moved = true if destination_field.piece.class <= Pawn
     else
       'error'
     end
+  end
+
+  def force_move(start_field, destination)
+    destination.piece = start_field.piece
+    start_field.piece = nil
   end
 
   def show_walkable_fields(start_field)
@@ -153,18 +160,20 @@ class Board
   end
 
   def putting_check?(color)
+    check = false
     team = find_all_team_pieces(color)
     team.each do |piece_field|
       possible_moves = walkable_fields(piece_field)
       possible_moves.each do |move|
         if move.piece.class <= King
           if move.piece.color != color
-            return true
+            @checker.push(piece_field)
+            check = true
           end
         end
       end
     end
-    false
+    check
   end
 
   def delete_walkable_fields
