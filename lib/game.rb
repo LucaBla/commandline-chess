@@ -90,6 +90,18 @@ class Game
     false
   end
 
+  def stalemate?(player)
+    possible_moves = []
+    team = @board.find_all_team_pieces(player.color)
+    team.each do |piece_field|
+      possible_moves.concat(@board.walkable_fields(piece_field))
+    end
+
+    return true if possible_moves.empty?
+
+    false
+  end
+
   def can_kick_checker?(player)
     puts 'test'
     team = @board.find_all_team_pieces(player.color)
@@ -134,7 +146,7 @@ class Game
   end
 
   def gameover?(player)
-    return true if check_mate?(player) == true
+    return true if check_mate?(player) == true || stalemate?(player) == true
 
     @board.checker = []
     false
@@ -153,7 +165,9 @@ b.each { |e| e.piece = nil if e.piece.class <= Pawn }
 g.board.force_move(g.board.find_field([7, 3]), g.board.find_field([6, 3]))
 g.board.force_move(g.board.find_field([0, 0]), g.board.find_field([7, 0]))
 g.board.force_move(g.board.find_field([0, 7]), g.board.find_field([5, 7]))
-g.board.force_move(g.board.find_field([0, 4]), g.board.find_field([1, 5]))
+g.board.force_move(g.board.find_field([0, 4]), g.board.find_field([1, 4]))
+
+g.board.find_field([7, 4]).piece = nil
 
 g.board.print_board
 g.play_round
