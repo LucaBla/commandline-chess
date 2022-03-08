@@ -1,7 +1,10 @@
 require './lib/board.rb'
 require './lib/player.rb'
+require './lib/game_ending_conditions.rb'
 
 class Game
+  include GameEndingConditions
+
   attr_accessor :board, :player1, :player2
 
   def initialize
@@ -30,6 +33,8 @@ class Game
     @board.move_piece(@board.find_field(input), @board.find_field(destination))
     looking_for_check(input, destination, player)
     @board.print_board
+    puts promotion?(player, destination)
+    promote(player, destination) if promotion?(player, destination)
   end
 
   def player_input(player, type, start = nil)
@@ -59,80 +64,6 @@ class Game
     return player_input(player, type) if !@board.walkable_fields(@board.find_field(start)).nil? && !@board.walkable_fields(@board.find_field(start)).empty? && !@board.walkable_fields(@board.find_field(start)).include?(move) && type == 'destination'    
   end
 
-  def set_player_check(current_player)
-    puts "ATATATATATATATATAT"
-    return @player2.checked = true if current_player == @player1
-
-    @player1.checked = true
-  end
-
-  def looking_for_check(start, destination, player)
-    set_player_check(player) if @board.putting_check?(player.color)
-    if player == @player1
-      player = @player2
-    else
-      player = @player1
-    end
-    return undo_move(start, destination, player) if @board.putting_check?(player.color)
-  end
-
-  def check_mate?(player)
-    team = @board.find_all_team_pieces(player.color)
-    king_field = team.select { |e| e if e.piece.class <= King }
-    king_field = king_field[0]
-    puts "checked: #{player.checked}"
-    puts king_field
-    puts "Empty: #{@board.walkable_fields(@board.find_field(king_field.coordinate)).empty?}"
-    @board.checker.each { |e| puts e.coordinate }
-    return true if player.checked == true && @board.walkable_fields(@board.find_field(king_field.coordinate)).empty? &&
-                   !can_kick_checker?(player) && !can_move_between_checker?(player) && !@board.checker.empty?
-
-    false
-  end
-
-  def stalemate?(player)
-    possible_moves = []
-    team = @board.find_all_team_pieces(player.color)
-    team.each do |piece_field|
-      possible_moves.concat(@board.walkable_fields(piece_field))
-    end
-
-    return true if possible_moves.empty?
-
-    false
-  end
-
-  def can_kick_checker?(player)
-    puts 'test'
-    team = @board.find_all_team_pieces(player.color)
-    team.each do |piece_field|
-      possible_moves = @board.walkable_fields(piece_field)
-      possible_moves.each do |move|
-        if @board.checker.include?(move)
-          @board.checker.delete(move)
-          return true
-        end
-      end
-    end
-    false
-  end
-
-  def can_move_between_checker?(player)
-    move_between = false
-    team = @board.find_all_team_pieces(player.color)
-    team.each do |piece_field|
-      possible_moves = @board.walkable_fields(piece_field)
-      possible_moves.each do |move|
-        @board.force_move(piece_field, move) if move.piece.nil?
-        color = WHITE if player.color == BLACK
-        color = BLACK if player.color == WHITE
-        move_between = true if @board.putting_check?(color) == false
-        @board.force_move(move, piece_field) if piece_field.piece.nil?
-      end
-    end
-    move_between
-  end
-
   def undo_move(start, destination, player)
     @board.force_move(@board.find_field(destination), @board.find_field(start))
     puts 'cant do that or you would be check-mate!'
@@ -145,11 +76,44 @@ class Game
     play_turn(player)
   end
 
-  def gameover?(player)
-    return true if check_mate?(player) == true || stalemate?(player) == true
+  def promotion?(player, field)
+    field = @board.find_field(field)
+    player.color == WHITE ? needed_field = 7 : needed_field = 0
+    return true if field.coordinate[0] == needed_field && field.piece.class <= Pawn
 
-    @board.checker = []
     false
+  end
+
+  def promote(player, field)
+    field = @board.find_field(field)
+    player.color == WHITE ? color = 'White' : color = 'Black'
+    promotion_ui
+    input = gets.chomp.to_i
+    return promote(player, field) unless [1, 2, 3, 4].include?(input)
+
+    field.piece = Object.const_get(promotion_get_class(input, color)).new
+  end
+
+  def promotion_ui
+    puts 'You can promote your Pawn pls select to which Piece you want to promote him:'
+    puts 'Queen = 1'
+    puts 'Rook = 2'
+    puts 'Knight = 3'
+    puts 'Bishop = 4'
+  end
+
+  def promotion_get_class(input, color)
+    case input
+    when 1
+      piece = "#{color}Queen"
+    when 2
+      piece = "#{color}Rook"
+    when 3
+      piece = "#{color}Knight"
+    when 4
+      piece = "#{color}Bishop"
+    end
+    piece
   end
 end
 
@@ -168,6 +132,7 @@ g.board.force_move(g.board.find_field([0, 7]), g.board.find_field([5, 7]))
 g.board.force_move(g.board.find_field([0, 4]), g.board.find_field([1, 4]))
 
 g.board.find_field([7, 4]).piece = nil
+g.board.find_field([5, 4]).piece = WhitePawn.new
 
 g.board.print_board
 g.play_round
