@@ -73,7 +73,8 @@ class Game
       player = @player1
     end
     @board.find_field(destination).piece = @board.last_deleted_piece
-    @board.find_field(start).piece.moved = false if (start[0] == 1 && @board.find_field(start).piece.class == WhitePawn) || (start[0] == 6 && @board.find_field(start).piece.class <= BlackPawn)
+    @board.find_field(start).piece.moved = false if (start[0] == 1 && @board.find_field(start).piece.class == WhitePawn) ||
+                                                    (start[0] == 6 && @board.find_field(start).piece.class == BlackPawn)
     play_turn(player)
   end
 
