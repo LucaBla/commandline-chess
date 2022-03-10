@@ -73,6 +73,7 @@ class Game
       player = @player1
     end
     @board.find_field(destination).piece = @board.last_deleted_piece
+    @board.find_field(start).piece.moved = false if (start[0] == 1 && @board.find_field(start).piece.class == WhitePawn) || (start[0] == 6 && @board.find_field(start).piece.class <= BlackPawn)
     play_turn(player)
   end
 
@@ -89,7 +90,7 @@ class Game
     player.color == WHITE ? color = 'White' : color = 'Black'
     promotion_ui
     input = gets.chomp.to_i
-    return promote(player, field) unless [1, 2, 3, 4].include?(input)
+    return promote(player, field.coordinate) unless [1, 2, 3, 4].include?(input)
 
     field.piece = Object.const_get(promotion_get_class(input, color)).new
   end
@@ -133,6 +134,9 @@ g.board.force_move(g.board.find_field([0, 4]), g.board.find_field([1, 4]))
 
 g.board.find_field([7, 4]).piece = nil
 g.board.find_field([5, 4]).piece = WhitePawn.new
+g.board.find_field([1, 0]).piece = WhitePawn.new
+g.board.find_field([5, 3]).piece = BlackQueen.new
+g.board.find_field([2, 1]).piece = BlackPawn.new
 
 g.board.print_board
 g.play_round
