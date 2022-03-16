@@ -7,14 +7,21 @@ module GameEndingConditions
   end
 
   def set_player_check(current_player)
-    puts "ATATATATATATATATAT"
+    puts "You are Checked!"
     return @player2.checked = true if current_player == @player1
 
     @player1.checked = true
   end
 
+  def set_player_no_check(current_player)
+    return @player2.checked = false if current_player == @player1
+
+    @player1.checked = false
+  end
+
   def looking_for_check(start, destination, player)
     set_player_check(player) if @board.putting_check?(player.color)
+    set_player_no_check(player) if !@board.putting_check?(player.color)
     if player == @player1
       player = @player2
     else
@@ -28,8 +35,6 @@ module GameEndingConditions
     king_field = team.select { |e| e if e.piece.class <= King }
     king_field = king_field[0]
     puts "checked: #{player.checked}"
-    puts king_field
-    puts "Empty: #{@board.walkable_fields(@board.find_field(king_field.coordinate)).empty?}"
     @board.checker.each { |e| puts e.coordinate }
     return true if player.checked == true && @board.walkable_fields(@board.find_field(king_field.coordinate)).empty? &&
                    !can_kick_checker?(player) && !can_move_between_checker?(player) && !@board.checker.empty?
@@ -50,7 +55,6 @@ module GameEndingConditions
   end
 
   def can_kick_checker?(player)
-    puts 'test'
     team = @board.find_all_team_pieces(player.color)
     team.each do |piece_field|
       possible_moves = @board.walkable_fields(piece_field)

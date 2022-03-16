@@ -33,7 +33,6 @@ class Game
     @board.move_piece(@board.find_field(input), @board.find_field(destination))
     looking_for_check(input, destination, player)
     @board.print_board
-    puts promotion?(player, destination)
     promote(player, destination) if promotion?(player, destination)
   end
 
@@ -45,7 +44,6 @@ class Game
 
     input = refactor_input(input)
     allowed_field?(input, player, type, start)
-    input
   end
 
   def refactor_input(input)
@@ -55,13 +53,17 @@ class Game
     move.reverse
   end
 
-  def allowed_field?(move, player, type, start = nil)
-    return player_input(player, type) if (@board.find_field(move).piece.nil? ||
-                                          @board.find_field(move).piece.color != player.color ||
-                                          @board.walkable_fields(@board.find_field(move)).empty?) &&
-                                          type == 'piece'
+  def allowed_field?(input, player, type, start = nil)
+    return player_input(player, type) if type == 'piece' &&
+                                         (@board.find_field(input).piece.nil? ||
+                                          @board.find_field(input).piece.color != player.color ||
+                                          @board.walkable_fields(@board.find_field(input)).empty?)
 
-    return player_input(player, type) if !@board.walkable_fields(@board.find_field(start)).nil? && !@board.walkable_fields(@board.find_field(start)).empty? && !@board.walkable_fields(@board.find_field(start)).include?(move) && type == 'destination'    
+    return player_input(player, type, start) if type == 'destination' &&
+                                                (@board.walkable_fields(@board.find_field(start)).empty? ||
+                                                !@board.walkable_fields(@board.find_field(start)).include?(@board.find_field(input)))
+
+    input
   end
 
   def undo_move(start, destination, player)
@@ -138,6 +140,8 @@ g.board.find_field([5, 4]).piece = WhitePawn.new
 g.board.find_field([1, 0]).piece = WhitePawn.new
 g.board.find_field([5, 3]).piece = BlackQueen.new
 g.board.find_field([2, 1]).piece = BlackPawn.new
+
+#puts g.board.walkable_fields(g.board.find_field([1, 4]))
 
 g.board.print_board
 g.play_round

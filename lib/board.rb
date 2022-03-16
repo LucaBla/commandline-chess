@@ -28,6 +28,7 @@ class Board
       root = root.bottom_field
     end
     print "   a   b   c   d   e   f   g   h\n"
+    delete_walkable_fields
   end
 
   def print_row(root = @root)
@@ -131,7 +132,7 @@ class Board
   end
 
   def move_piece(start_field, destination_field)
-    delete_walkable_fields
+    # delete_walkable_fields
     possible_moves = walkable_fields(start_field)
     if possible_moves.include?(destination_field) && !destination_field.nil?
       @last_deleted_piece = destination_field.piece

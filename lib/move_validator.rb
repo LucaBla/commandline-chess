@@ -18,10 +18,8 @@ module MoveValidator
       e.piece.color == start_field.piece.color unless e.nil? || e.piece.nil?
     end
     if start_field.piece.class <= King && first_king == true
-      puts start_field.piece
       color = WHITE if start_field.piece.color == BLACK
       color = BLACK if start_field.piece.color == WHITE
-      p color
       team = find_all_team_pieces(color)
       enemy_possible_moves = []
       king = start_field.piece
