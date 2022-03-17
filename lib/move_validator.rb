@@ -83,7 +83,7 @@ module MoveValidator
     return false if (left_piece_field.piece.nil? || atze.nil? || left_piece_field.piece.moved == true) &&
                     (right_piece_field.piece.nil? || right_piece_field.piece.moved == true)
 
-    # return false if player.checked == true
+    #return false if player.checked == true
 
     # moving fields are not enemy attacked
 
