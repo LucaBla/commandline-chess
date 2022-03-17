@@ -136,11 +136,35 @@ class Board
     possible_moves = walkable_fields(start_field)
     if possible_moves.include?(destination_field) && !destination_field.nil?
       @last_deleted_piece = destination_field.piece
+      kick_en_passant(start_field.piece.color, destination_field)
       force_move(start_field, destination_field)
       destination_field.piece.moved = true if destination_field.piece.class <= Pawn
+      set_en_passant(start_field, destination_field) if destination_field.piece.class <= Pawn
     else
       'error'
     end
+  end
+
+  def set_en_passant(start_field, destination_field)
+    destination_field.piece.en_passant = true if start_field.coordinate[0] == 1 && destination_field.coordinate[0] == 3
+    destination_field.piece.en_passant = true if start_field.coordinate[0] == 6 && destination_field.coordinate[0] == 4
+  end
+
+  def remove_en_passant(player)
+    team = find_all_team_pieces(player.color)
+    team.each do |e|
+      e.piece.en_passant = false if e.piece.class <= Pawn
+    end
+  end
+
+  def kick_en_passant(color, destination_field)
+    enemy_color = 'Black' if color == WHITE
+    enemy_color = 'White' if color == BLACK
+    pawn_class = Object.const_get("#{enemy_color}Pawn")
+    destination_field.bottom_field.piece = nil if !destination_field.bottom_field.nil? && !destination_field.bottom_field.piece.nil? &&
+                                                  destination_field.bottom_field.piece.instance_of?(pawn_class) &&
+                                                  destination_field.bottom_field.piece.en_passant
+    @last_deleted_piece = destination_field.bottom_field.piece
   end
 
   def force_move(start_field, destination)

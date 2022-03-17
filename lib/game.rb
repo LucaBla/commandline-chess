@@ -26,6 +26,7 @@ class Game
   end
 
   def play_turn(player)
+    @board.remove_en_passant(player)
     input = player_input(player, 'piece')
     @board.show_walkable_fields(input)
     @board.print_board
@@ -122,26 +123,26 @@ class Game
 end
 
 g = Game.new
-g.board.move_piece(g.board.find_field([1, 0]), g.board.find_field([2, 0]))
 # g.board.move_piece(g.board.find_field([1, 0]), g.board.find_field([2, 0]))
-a = g.board.find_all_team_pieces(BLACK)
-a.each { |e| e.piece = nil unless e.piece.class <= King || e.piece.class <= Queen }
+# g.board.move_piece(g.board.find_field([1, 0]), g.board.find_field([2, 0]))
+# a = g.board.find_all_team_pieces(BLACK)
+# a.each { |e| e.piece = nil unless e.piece.class <= King || e.piece.class <= Queen }
 
-b = g.board.find_all_team_pieces(WHITE)
-b.each { |e| e.piece = nil if e.piece.class <= Pawn }
+# b = g.board.find_all_team_pieces(WHITE)
+# b.each { |e| e.piece = nil if e.piece.class <= Pawn }
 
-g.board.force_move(g.board.find_field([7, 3]), g.board.find_field([6, 3]))
-g.board.force_move(g.board.find_field([0, 0]), g.board.find_field([7, 0]))
-g.board.force_move(g.board.find_field([0, 7]), g.board.find_field([5, 7]))
-g.board.force_move(g.board.find_field([0, 4]), g.board.find_field([1, 4]))
+# g.board.force_move(g.board.find_field([7, 3]), g.board.find_field([6, 3]))
+# g.board.force_move(g.board.find_field([0, 0]), g.board.find_field([7, 0]))
+# g.board.force_move(g.board.find_field([0, 7]), g.board.find_field([5, 7]))
+# g.board.force_move(g.board.find_field([0, 4]), g.board.find_field([1, 4]))
 
-g.board.find_field([7, 4]).piece = nil
-g.board.find_field([5, 4]).piece = WhitePawn.new
-g.board.find_field([1, 0]).piece = WhitePawn.new
-g.board.find_field([5, 3]).piece = BlackQueen.new
-g.board.find_field([2, 1]).piece = BlackPawn.new
+# g.board.find_field([7, 4]).piece = nil
+# g.board.find_field([5, 4]).piece = WhitePawn.new
+# g.board.find_field([1, 0]).piece = WhitePawn.new
+# g.board.find_field([5, 3]).piece = BlackQueen.new
+# g.board.find_field([2, 1]).piece = BlackPawn.new
 
-#puts g.board.walkable_fields(g.board.find_field([1, 4]))
+# puts g.board.walkable_fields(g.board.find_field([1, 4]))
 
 g.board.print_board
 g.play_round

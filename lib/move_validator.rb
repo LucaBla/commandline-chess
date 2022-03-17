@@ -209,8 +209,27 @@ module MoveValidator
     diagonal_enemy_left(field, pawn) ? top_left = [1] : top_left = [0]
     diagonal_enemy_right(field, pawn) ? top_right = [1] : top_right = [0]
 
+    top_left = [1] if pawn_en_passant_move_left(pawn, field)
+    top_right = [1] if pawn_en_passant_move_right(pawn, field)
+
     pawn.moves = { top_left: top_left, top: top, top_right: top_right,
                    bottom_left: [0], bottom: [0], bottom_right: [0], left: [0], right: [0] }
+  end
+
+  def pawn_en_passant_move_left(pawn, field)
+    color = 'Black' if pawn.instance_of?(WhitePawn)
+    color = 'White' if pawn.instance_of?(BlackPawn)
+    class_name = "#{color}Pawn"
+    enemy_pawn = Object.const_get(class_name)
+    true if !field.left_field.nil? && !field.left_field.piece.nil? && field.left_field.piece.class <= enemy_pawn && field.left_field.piece.en_passant
+  end
+
+  def pawn_en_passant_move_right(pawn, field)
+    color = 'Black' if pawn.instance_of?(WhitePawn)
+    color = 'White' if pawn.instance_of?(BlackPawn)
+    class_name = "#{color}Pawn"
+    enemy_pawn = Object.const_get(class_name)
+    true if !field.right_field.nil? && !field.right_field.piece.nil? && field.right_field.piece.class <= enemy_pawn && field.right_field.piece.en_passant
   end
 
   def pawn_top_move(pawn, field)

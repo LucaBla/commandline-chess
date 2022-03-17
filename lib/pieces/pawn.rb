@@ -3,7 +3,7 @@ require './lib/pieces/piece.rb'
 BLACK = "\e[30m"
 WHITE = ""
 class Pawn < Piece
-  attr_accessor :moved, :moves
+  attr_accessor :moved, :moves, :en_passant
   attr_reader :model, :color
 
   def initialize
@@ -11,6 +11,7 @@ class Pawn < Piece
     @model = "\u265f"
     @moved = false
     @moves = {}
+    @en_passant = false
   end
 end
 
