@@ -47,6 +47,78 @@ module MoveValidator
     allowed_fields
   end
 
+  def castling(player)
+    team = @board.find_all_team_pieces(player.color)
+    king_field = nil
+    team.each do |e|
+      king_field = e if e.piece.class <= King
+    end
+
+    rooks = get_castle_rook(king_field)
+    left_piece_field = rooks[0]
+    right_piece_field = rooks[1]
+
+    return if can_castle?(color) == false
+
+    if can_castle?(color) == 'left'
+      king_field.left_field.left_field = king_field.piece
+      king_field.piece = nil
+      king_field = king_field.left_field.left_field
+
+      king_field.right_field = left_piece_field.piece
+      left_piece_field.piece = nil
+    else
+      king_field.right_field.right_field = king_field.piece
+      king_field.piece = nil
+      king_field = king_field.right_field.right_field
+
+      king_field.left_field = right_piece_field.piece
+      right_piece_field.piece = nil
+    end
+  end
+
+  def can_castle?(color)
+    team = find_all_team_pieces(color)
+    king_field = nil
+    team.each do |e|
+      king_field = e if e.piece.class <= King
+    end
+
+    rooks = get_castle_rook(king_field)
+    left_piece_field = rooks[0]
+    right_piece_field = rooks[1]
+
+    return false if left_piece_field.nil? && right_piece_field.nil?
+
+    return false if left_piece_field.piece.nil? && right_piece_field.piece.nil?
+
+    return false if left_piece_field.piece.class <=> Rook && right_piece_field.piece.class <=> Rook
+
+    return false if left_piece_field.piece.moved == true || king_field.piece.moved == true
+
+    return false if player.checked == true
+
+    # moving fields are not enemy attacked
+
+    # field king is moving to is not attacked
+    return 'left' if left_piece_field.piece <= Rook
+
+    'right' if right_piece_field.piece <= Rook
+  end
+
+  def get_castle_rook(king_field)
+    root = king_field
+    left_piece_field = root.left_field until !root.left_field.piece.nil? || root.left_field.nil?
+    right_piece_field = root.right_field until !root.right_field.piece.nil? || root.right_field.nil?
+
+    sol = []
+    sol.push(left_piece_field) unless left_piece_field.nil?
+    sol.push(nil) if sol.length != 1
+    sol.push(right_piece_field) unless right_piece_field.nil?
+    sol.push(nil) if sol.length != 2
+    sol
+  end
+
   def knight_allowed_fields(start_field, moves)
     allowed_fields = []
     plus = :+
@@ -221,7 +293,8 @@ module MoveValidator
     color = 'White' if pawn.instance_of?(BlackPawn)
     class_name = "#{color}Pawn"
     enemy_pawn = Object.const_get(class_name)
-    true if !field.left_field.nil? && !field.left_field.piece.nil? && field.left_field.piece.class <= enemy_pawn && field.left_field.piece.en_passant
+    true if !field.left_field.nil? && !field.left_field.piece.nil? && field.left_field.piece.class <= enemy_pawn &&
+            field.left_field.piece.en_passant
   end
 
   def pawn_en_passant_move_right(pawn, field)
@@ -229,7 +302,8 @@ module MoveValidator
     color = 'White' if pawn.instance_of?(BlackPawn)
     class_name = "#{color}Pawn"
     enemy_pawn = Object.const_get(class_name)
-    true if !field.right_field.nil? && !field.right_field.piece.nil? && field.right_field.piece.class <= enemy_pawn && field.right_field.piece.en_passant
+    true if !field.right_field.nil? && !field.right_field.piece.nil? && field.right_field.piece.class <= enemy_pawn &&
+            field.right_field.piece.en_passant
   end
 
   def pawn_top_move(pawn, field)

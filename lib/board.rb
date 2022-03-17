@@ -138,7 +138,8 @@ class Board
       @last_deleted_piece = destination_field.piece
       kick_en_passant(start_field.piece.color, destination_field)
       force_move(start_field, destination_field)
-      destination_field.piece.moved = true if destination_field.piece.class <= Pawn
+      destination_field.piece.moved = true if destination_field.piece.class <= Pawn ||
+                                              destination_field.piece.class <= Rook || destination_field.piece.class <= King
       set_en_passant(start_field, destination_field) if destination_field.piece.class <= Pawn
     else
       'error'

@@ -1,6 +1,7 @@
 require './lib/pieces/piece.rb'
 
 class Rook < Piece
+  attr_accessor :moved
   attr_reader :model
 
   def initialize
@@ -8,6 +9,7 @@ class Rook < Piece
     @model = "\u265c"
     @moves = { top_left: [0], top: (1..7).to_a, top_right: [0],
                bottom_left: [0], bottom: (1..7).to_a, bottom_right: [0], left: (1..7).to_a, right: (1..7).to_a }
+    @moved = false
   end
 end
 

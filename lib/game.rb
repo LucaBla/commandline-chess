@@ -14,6 +14,7 @@ class Game
   end
 
   def play_round(current_player = player1)
+    @board.print_board
     until gameover?(current_player) == true
       play_turn(current_player)
       if current_player == player1
@@ -22,7 +23,7 @@ class Game
         current_player = player1
       end
     end
-    puts gameover?(current_player)
+    # puts gameover?(current_player)
   end
 
   def play_turn(player)
@@ -144,6 +145,5 @@ g = Game.new
 
 # puts g.board.walkable_fields(g.board.find_field([1, 4]))
 
-g.board.print_board
 g.play_round
 # p g.board.find_field([8, 8])
