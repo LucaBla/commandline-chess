@@ -179,9 +179,10 @@ class Board
     enemy_color = 'Black' if color == WHITE
     enemy_color = 'White' if color == BLACK
     pawn_class = Object.const_get("#{enemy_color}Pawn")
-    destination_field.bottom_field.piece = nil if !destination_field.bottom_field.nil? && !destination_field.bottom_field.piece.nil? &&
-                                                  destination_field.bottom_field.piece.instance_of?(pawn_class) &&
-                                                  destination_field.bottom_field.piece.en_passant
+    enemy_color == 'Black' ? pawn_to_delete_field = destination_field.bottom_field : pawn_to_delete_field = destination_field.top_field
+    pawn_to_delete_field.piece = nil if !pawn_to_delete_field.nil? && !pawn_to_delete_field.piece.nil? &&
+                                                  pawn_to_delete_field.piece.instance_of?(pawn_class) &&
+                                                  pawn_to_delete_field.piece.en_passant
     @last_deleted_piece = destination_field.bottom_field.piece
   end
 

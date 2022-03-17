@@ -83,11 +83,8 @@ module MoveValidator
     return false if (left_piece_field.piece.nil? || atze.nil? || left_piece_field.piece.moved == true) &&
                     (right_piece_field.piece.nil? || right_piece_field.piece.moved == true)
 
-    #return false if player.checked == true
+    # return false if player.checked == true
 
-    # moving fields are not enemy attacked
-
-    # field king is moving to is not attacked
     return 'left' if left_piece_field.piece.class <= Rook
 
     return 'right' if right_piece_field.piece.class <= Rook
@@ -272,8 +269,10 @@ module MoveValidator
     diagonal_enemy_left(field, pawn) ? top_left = [1] : top_left = [0]
     diagonal_enemy_right(field, pawn) ? top_right = [1] : top_right = [0]
 
-    top_left = [1] if pawn_en_passant_move_left(pawn, field)
-    top_right = [1] if pawn_en_passant_move_right(pawn, field)
+    top_left = [1] if (pawn_en_passant_move_left(pawn, field) && pawn.color == WHITE) ||
+                      (pawn_en_passant_move_right(pawn, field) && pawn.color == BLACK)
+    top_right = [1] if (pawn_en_passant_move_right(pawn, field) && pawn.color == WHITE) ||
+                       (pawn_en_passant_move_left(pawn, field) && pawn.color == BLACK)
 
     pawn.moves = { top_left: top_left, top: top, top_right: top_right,
                    bottom_left: [0], bottom: [0], bottom_right: [0], left: [0], right: [0] }
