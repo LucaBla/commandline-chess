@@ -140,10 +140,27 @@ class Board
       force_move(start_field, destination_field)
       destination_field.piece.moved = true if destination_field.piece.class <= Pawn ||
                                               destination_field.piece.class <= Rook || destination_field.piece.class <= King
+      castling_move_rook(start_field, destination_field) if destination_field.piece.class <= King
       set_en_passant(start_field, destination_field) if destination_field.piece.class <= Pawn
     else
       'error'
     end
+  end
+
+  def castling_move_rook(start_field, destination_field)
+    new_rook_field = nil
+    if start_field.left_field.left_field == destination_field
+      rook = 0
+      new_rook_field = destination_field.right_field
+    elsif start_field.right_field.right_field == destination_field
+      rook = 1
+      new_rook_field = destination_field.left_field
+    else
+      return
+    end
+    rook_field = get_castle_rook(destination_field)[rook]
+    new_rook_field.piece = rook_field.piece
+    rook_field.piece = nil
   end
 
   def set_en_passant(start_field, destination_field)

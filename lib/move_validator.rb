@@ -59,36 +59,6 @@ module MoveValidator
     allowed_fields
   end
 
-  # def castling(player)
-  #   team = @board.find_all_team_pieces(player.color)
-  #   king_field = nil
-  #   team.each do |e|
-  #     king_field = e if e.piece.class <= King
-  #   end
-
-  #   rooks = get_castle_rook(king_field)
-  #   left_piece_field = rooks[0]
-  #   right_piece_field = rooks[1]
-
-  #   return if can_castle?(color) == false
-
-  #   if can_castle?(color) == 'left'
-  #     king_field.left_field.left_field = king_field.piece
-  #     king_field.piece = nil
-  #     king_field = king_field.left_field.left_field
-
-  #     king_field.right_field = left_piece_field.piece
-  #     left_piece_field.piece = nil
-  #   else
-  #     king_field.right_field.right_field = king_field.piece
-  #     king_field.piece = nil
-  #     king_field = king_field.right_field.right_field
-
-  #     king_field.left_field = right_piece_field.piece
-  #     right_piece_field.piece = nil
-  #   end
-  # end
-
   def can_castle?(color)
     team = find_all_team_pieces(color)
     king_field = nil
@@ -106,10 +76,11 @@ module MoveValidator
     return false if left_piece_field.piece.nil? && right_piece_field.piece.nil?
 
     return false unless left_piece_field.piece.class <= Rook || right_piece_field.piece.class <= Rook
-    p left_piece_field.piece.class <= Rook
+    p left_piece_field.piece.class <=> Rook
     return false if king_field.piece.moved == true
 
-    return false if (left_piece_field.piece.nil? || left_piece_field.piece.moved == true) &&
+    atze = left_piece_field.piece.class <=> Rook
+    return false if (left_piece_field.piece.nil? || atze.nil? || left_piece_field.piece.moved == true) &&
                     (right_piece_field.piece.nil? || right_piece_field.piece.moved == true)
 
     # return false if player.checked == true
@@ -119,8 +90,8 @@ module MoveValidator
     # field king is moving to is not attacked
     return 'left' if left_piece_field.piece.class <= Rook
 
-    'right' if right_piece_field.piece.class <= Rook
-    puts 'test'
+    return 'right' if right_piece_field.piece.class <= Rook
+
     false
   end
 

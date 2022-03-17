@@ -54,14 +54,14 @@ module FieldFiller
   end
 
   def fill_king
-    find_field([0, 3]).piece = WhiteKing.new
+    find_field([0, 4]).piece = WhiteKing.new
 
-    find_field([7, 3]).piece = BlackKing.new
+    find_field([7, 4]).piece = BlackKing.new
   end
 
   def fill_queen
-    find_field([0, 4]).piece = WhiteQueen.new
+    find_field([0, 3]).piece = WhiteQueen.new
 
-    find_field([7, 4]).piece = BlackQueen.new
+    find_field([7, 3]).piece = BlackQueen.new
   end
 end
