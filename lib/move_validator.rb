@@ -9,6 +9,7 @@ module MoveValidator
     moves = start_field.piece.moves.reject { |_, value| value == [0] }
     start_field.piece.color == WHITE ? allowed_fields = return_white_allowed_field(start_field, moves)
                                      : allowed_fields = return_black_allowed_field(start_field, moves)
+    allowed_fields = king_get_castle_move(start_field, allowed_fields) if start_field.piece.class <= King
     clear_allowed_fields(allowed_fields, start_field, first_king)
   end
 
@@ -47,35 +48,46 @@ module MoveValidator
     allowed_fields
   end
 
-  def castling(player)
-    team = @board.find_all_team_pieces(player.color)
-    king_field = nil
-    team.each do |e|
-      king_field = e if e.piece.class <= King
-    end
+  def king_get_castle_move(start_field, allowed_fields)
+    condition = can_castle?(start_field.piece.color)
+    p condition
+    return allowed_fields if condition == false
 
-    rooks = get_castle_rook(king_field)
-    left_piece_field = rooks[0]
-    right_piece_field = rooks[1]
+    allowed_fields.push(start_field.left_field.left_field) if condition == 'left'
+    allowed_fields.push(start_field.right_field.right_field) if condition == 'right'
 
-    return if can_castle?(color) == false
-
-    if can_castle?(color) == 'left'
-      king_field.left_field.left_field = king_field.piece
-      king_field.piece = nil
-      king_field = king_field.left_field.left_field
-
-      king_field.right_field = left_piece_field.piece
-      left_piece_field.piece = nil
-    else
-      king_field.right_field.right_field = king_field.piece
-      king_field.piece = nil
-      king_field = king_field.right_field.right_field
-
-      king_field.left_field = right_piece_field.piece
-      right_piece_field.piece = nil
-    end
+    allowed_fields
   end
+
+  # def castling(player)
+  #   team = @board.find_all_team_pieces(player.color)
+  #   king_field = nil
+  #   team.each do |e|
+  #     king_field = e if e.piece.class <= King
+  #   end
+
+  #   rooks = get_castle_rook(king_field)
+  #   left_piece_field = rooks[0]
+  #   right_piece_field = rooks[1]
+
+  #   return if can_castle?(color) == false
+
+  #   if can_castle?(color) == 'left'
+  #     king_field.left_field.left_field = king_field.piece
+  #     king_field.piece = nil
+  #     king_field = king_field.left_field.left_field
+
+  #     king_field.right_field = left_piece_field.piece
+  #     left_piece_field.piece = nil
+  #   else
+  #     king_field.right_field.right_field = king_field.piece
+  #     king_field.piece = nil
+  #     king_field = king_field.right_field.right_field
+
+  #     king_field.left_field = right_piece_field.piece
+  #     right_piece_field.piece = nil
+  #   end
+  # end
 
   def can_castle?(color)
     team = find_all_team_pieces(color)
@@ -85,6 +97,7 @@ module MoveValidator
     end
 
     rooks = get_castle_rook(king_field)
+
     left_piece_field = rooks[0]
     right_piece_field = rooks[1]
 
@@ -92,24 +105,31 @@ module MoveValidator
 
     return false if left_piece_field.piece.nil? && right_piece_field.piece.nil?
 
-    return false if left_piece_field.piece.class <=> Rook && right_piece_field.piece.class <=> Rook
+    return false unless left_piece_field.piece.class <= Rook || right_piece_field.piece.class <= Rook
+    p left_piece_field.piece.class <= Rook
+    return false if king_field.piece.moved == true
 
-    return false if left_piece_field.piece.moved == true || king_field.piece.moved == true
+    return false if (left_piece_field.piece.nil? || left_piece_field.piece.moved == true) &&
+                    (right_piece_field.piece.nil? || right_piece_field.piece.moved == true)
 
-    return false if player.checked == true
+    # return false if player.checked == true
 
     # moving fields are not enemy attacked
 
     # field king is moving to is not attacked
-    return 'left' if left_piece_field.piece <= Rook
+    return 'left' if left_piece_field.piece.class <= Rook
 
-    'right' if right_piece_field.piece <= Rook
+    'right' if right_piece_field.piece.class <= Rook
+    puts 'test'
+    false
   end
 
   def get_castle_rook(king_field)
     root = king_field
-    left_piece_field = root.left_field until !root.left_field.piece.nil? || root.left_field.nil?
-    right_piece_field = root.right_field until !root.right_field.piece.nil? || root.right_field.nil?
+    left_piece_field = root.left_field
+    right_piece_field = root.right_field
+    left_piece_field = left_piece_field.left_field until !left_piece_field.piece.nil? || left_piece_field.left_field.nil?
+    right_piece_field = right_piece_field.right_field until !right_piece_field.piece.nil? || right_piece_field.right_field.nil?
 
     sol = []
     sol.push(left_piece_field) unless left_piece_field.nil?

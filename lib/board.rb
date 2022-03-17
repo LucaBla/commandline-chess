@@ -136,7 +136,7 @@ class Board
     possible_moves = walkable_fields(start_field)
     if possible_moves.include?(destination_field) && !destination_field.nil?
       @last_deleted_piece = destination_field.piece
-      kick_en_passant(start_field.piece.color, destination_field)
+      kick_en_passant(start_field.piece.color, destination_field) if start_field.piece.class <= Pawn
       force_move(start_field, destination_field)
       destination_field.piece.moved = true if destination_field.piece.class <= Pawn ||
                                               destination_field.piece.class <= Rook || destination_field.piece.class <= King

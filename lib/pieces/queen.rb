@@ -1,5 +1,5 @@
 class Queen < Piece
-  attr_reader :model
+  attr_reader :model, :color
 
   def initialize
     super
