@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+
+# King Class
 class King < Piece
   attr_accessor :moved
   attr_reader :model, :color
@@ -11,6 +14,7 @@ class King < Piece
   end
 end
 
+# Black King Class
 class BlackKing < King
   def initialize
     super
@@ -19,6 +23,7 @@ class BlackKing < King
   end
 end
 
+# White King Class
 class WhiteKing < King
   def initialize
     super

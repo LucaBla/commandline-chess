@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+
+# Rook Class
 class Bishop < Piece
   attr_reader :model, :color
 
@@ -9,6 +12,7 @@ class Bishop < Piece
   end
 end
 
+# Black Bishop Class
 class BlackBishop < Bishop
   def initialize
     super
@@ -17,6 +21,7 @@ class BlackBishop < Bishop
   end
 end
 
+# White Bishop Class
 class WhiteBishop < Bishop
   def initialize
     super

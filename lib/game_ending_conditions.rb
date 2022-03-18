@@ -1,4 +1,11 @@
+# frozen_string_literal: true
+
+require './lib/color'
+
+# Contains the Methods that controls if the gameover conditions are meet
 module GameEndingConditions
+  include Color
+
   def gameover?(player)
     return true if check_mate?(player) == true || stalemate?(player) == true
 

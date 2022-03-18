@@ -2,6 +2,7 @@
 
 require './lib/pieces/piece'
 
+# Rook Class
 class Rook < Piece
   attr_accessor :moved
   attr_reader :model, :color
@@ -15,6 +16,7 @@ class Rook < Piece
   end
 end
 
+# Black Rook Class
 class BlackRook < Rook
   def initialize
     super
@@ -23,6 +25,7 @@ class BlackRook < Rook
   end
 end
 
+# White Rook Class
 class WhiteRook < Rook
   def initialize
     super

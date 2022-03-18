@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+
+# Queen Class
 class Queen < Piece
   attr_reader :model, :color
 
@@ -10,6 +13,7 @@ class Queen < Piece
   end
 end
 
+# Black Queen Class
 class BlackQueen < Queen
   def initialize
     super
@@ -18,6 +22,7 @@ class BlackQueen < Queen
   end
 end
 
+# White Queen Class
 class WhiteQueen < Queen
   def initialize
     super

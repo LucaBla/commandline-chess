@@ -2,6 +2,7 @@
 
 require './lib/color'
 
+# Class for the Players of the Game
 class Player
   include Color
 

@@ -6,6 +6,7 @@ require './lib/pieces/bishop'
 require './lib/pieces/king'
 require './lib/pieces/queen'
 
+# Module that contains Methods that fill the Field
 module FieldFiller
   def fill_board
     fill_pawns

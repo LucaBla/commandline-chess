@@ -5,6 +5,7 @@ require './lib/player'
 require './lib/game_ending_conditions'
 require './lib/color'
 
+# The Class that plays the Game
 class Game
   include GameEndingConditions
   include Color
@@ -21,13 +22,12 @@ class Game
     @board.print_board
     until gameover?(current_player) == true
       play_turn(current_player)
-      if current_player == player1
-        current_player = player2
-      else
-        current_player = player1
-      end
+      current_player = if current_player == player1
+                         player2
+                       else
+                         player1
+                       end
     end
-    # puts gameover?(current_player)
   end
 
   def play_turn(player)
@@ -46,7 +46,8 @@ class Game
     puts "#{player.name} pls enter the Piece you want to move: (like a1 or h7)" if type == 'piece'
     puts "#{player.name} pls enter your destination: (like a1 or h7)" if type == 'destination'
     input = gets.chomp
-    return player_input(player, type, start) if input.length != 2 || !('a'..'h').include?(input[0]) || !('0'..'7').include?(input[1])
+    return player_input(player, type, start) if input.length != 2 || !('a'..'h').include?(input[0]) ||
+                                                !('0'..'7').include?(input[1])
 
     input = refactor_input(input)
     allowed_field?(input, player, type, start)
@@ -75,22 +76,18 @@ class Game
   def undo_move(start, destination, player)
     @board.force_move(@board.find_field(destination), @board.find_field(start))
     puts 'cant do that or you would be check-mate!'
-    if player == @player1
-      player = @player2
-    else
-      player = @player1
-    end
+    player = player == @player1 ? @player2 : @player1
     @board.find_field(destination).piece = @board.last_deleted_piece
     @board.find_field(start).piece.moved = false if (start[0] == 1 &&
                                                     @board.find_field(start).piece.instance_of?(WhitePawn)) ||
                                                     (start[0] == 6 &&
-                                                    @board.find_field(start).piece.instance_of(BlackPawn))
+                                                    @board.find_field(start).piece.instance_of?(BlackPawn))
     play_turn(player)
   end
 
   def promotion?(player, field)
     field = @board.find_field(field)
-    player.color == WHITE ? needed_field = 7 : needed_field = 0
+    needed_field = player.color == WHITE ? 7 : 0
     return true if field.coordinate[0] == needed_field && field.piece.class <= Pawn
 
     false
@@ -98,7 +95,7 @@ class Game
 
   def promote(player, field)
     field = @board.find_field(field)
-    player.color == WHITE ? color = 'White' : color = 'Black'
+    color = player.color == WHITE ? 'White' : 'Black'
     promotion_ui
     input = gets.chomp.to_i
     return promote(player, field.coordinate) unless [1, 2, 3, 4].include?(input)
@@ -130,26 +127,5 @@ class Game
 end
 
 g = Game.new
-# g.board.move_piece(g.board.find_field([1, 0]), g.board.find_field([2, 0]))
-# g.board.move_piece(g.board.find_field([1, 0]), g.board.find_field([2, 0]))
-# a = g.board.find_all_team_pieces(BLACK)
-# a.each { |e| e.piece = nil unless e.piece.class <= King || e.piece.class <= Queen }
-
-# b = g.board.find_all_team_pieces(WHITE)
-# b.each { |e| e.piece = nil if e.piece.class <= Pawn }
-
-# g.board.force_move(g.board.find_field([7, 3]), g.board.find_field([6, 3]))
-# g.board.force_move(g.board.find_field([0, 0]), g.board.find_field([7, 0]))
-# g.board.force_move(g.board.find_field([0, 7]), g.board.find_field([5, 7]))
-# g.board.force_move(g.board.find_field([0, 4]), g.board.find_field([1, 4]))
-
-# g.board.find_field([7, 4]).piece = nil
-# g.board.find_field([5, 4]).piece = WhitePawn.new
-# g.board.find_field([1, 0]).piece = WhitePawn.new
-# g.board.find_field([5, 3]).piece = BlackQueen.new
-# g.board.find_field([2, 1]).piece = BlackPawn.new
-
-# puts g.board.walkable_fields(g.board.find_field([1, 4]))
 
 g.play_round
-# p g.board.find_field([8, 8])

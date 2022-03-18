@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# Field of the Chessboard
 class Field
   attr_accessor :coordinate, :piece, :color, :top_field, :bottom_field, :left_field, :right_field, :capturable
 

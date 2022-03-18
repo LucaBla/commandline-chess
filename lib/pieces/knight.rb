@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+
+# Knight Class
 class Knight < Piece
   attr_reader :model, :color
 
@@ -9,6 +12,7 @@ class Knight < Piece
   end
 end
 
+# Black Knight Class
 class BlackKnight < Knight
   def initialize
     super
@@ -17,6 +21,7 @@ class BlackKnight < Knight
   end
 end
 
+# White Knight Class
 class WhiteKnight < Knight
   def initialize
     super

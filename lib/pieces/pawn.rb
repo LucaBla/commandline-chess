@@ -3,6 +3,7 @@
 require './lib/pieces/piece'
 require './lib/color'
 
+# Pawn Class
 class Pawn < Piece
   include Color
 
@@ -18,6 +19,7 @@ class Pawn < Piece
   end
 end
 
+# Black Pawn Class
 class BlackPawn < Pawn
   def initialize
     super
@@ -26,6 +28,7 @@ class BlackPawn < Pawn
   end
 end
 
+# White Pawn Class
 class WhitePawn < Pawn
   def initialize
     super

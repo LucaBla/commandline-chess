@@ -2,6 +2,7 @@
 
 require './lib/color'
 
+# Class for the Pieces of the Game
 class Piece
   include Color
 

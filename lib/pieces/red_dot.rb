@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# Red-Dot that shows were selected piece can move
 class RedDot
   attr_reader :color, :model, :moves
 
