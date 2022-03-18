@@ -1,4 +1,8 @@
+require './lib/color.rb'
+
 class Piece
+  include Color
+
   attr_accessor :moves
   attr_reader :color
 

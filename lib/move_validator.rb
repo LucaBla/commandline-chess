@@ -1,6 +1,6 @@
+require './lib/color.rb'
 module MoveValidator
-  BLACK = "\e[30m"
-  WHITE = ""
+  include Color
 
   def walkable_fields(start_field, first_king = true)
     return if start_field.nil? || start_field.piece.nil?

@@ -1,9 +1,11 @@
 require './lib/board.rb'
 require './lib/player.rb'
 require './lib/game_ending_conditions.rb'
+require './lib/color.rb'
 
 class Game
   include GameEndingConditions
+  include Color
 
   attr_accessor :board, :player1, :player2
 

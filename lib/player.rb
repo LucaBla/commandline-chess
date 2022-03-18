@@ -1,7 +1,8 @@
-BLACK = "\e[30m"
-WHITE = ""
+require './lib/color.rb'
 
 class Player
+  include Color
+
   attr_accessor :color, :name, :checked
 
   def initialize(name)

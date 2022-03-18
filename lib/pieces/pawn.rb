@@ -1,8 +1,9 @@
 require './lib/pieces/piece.rb'
+require './lib/color.rb'
 
-BLACK = "\e[30m"
-WHITE = ""
 class Pawn < Piece
+  include Color
+
   attr_accessor :moved, :moves, :en_passant
   attr_reader :model, :color
 
