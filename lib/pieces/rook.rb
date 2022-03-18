@@ -1,4 +1,6 @@
-require './lib/pieces/piece.rb'
+# frozen_string_literal: true
+
+require './lib/pieces/piece'
 
 class Rook < Piece
   attr_accessor :moved

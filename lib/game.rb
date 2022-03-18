@@ -1,7 +1,9 @@
-require './lib/board.rb'
-require './lib/player.rb'
-require './lib/game_ending_conditions.rb'
-require './lib/color.rb'
+# frozen_string_literal: true
+
+require './lib/board'
+require './lib/player'
+require './lib/game_ending_conditions'
+require './lib/color'
 
 class Game
   include GameEndingConditions
@@ -62,7 +64,7 @@ class Game
                                          (@board.find_field(input).piece.nil? ||
                                           @board.find_field(input).piece.color != player.color ||
                                           @board.walkable_fields(@board.find_field(input)).empty?)
-    puts start
+
     return player_input(player, type, start) if type == 'destination' &&
                                                 (@board.walkable_fields(@board.find_field(start)).empty? ||
                                                 !@board.walkable_fields(@board.find_field(start)).include?(@board.find_field(input)))
@@ -79,8 +81,10 @@ class Game
       player = @player1
     end
     @board.find_field(destination).piece = @board.last_deleted_piece
-    @board.find_field(start).piece.moved = false if (start[0] == 1 && @board.find_field(start).piece.class == WhitePawn) ||
-                                                    (start[0] == 6 && @board.find_field(start).piece.class == BlackPawn)
+    @board.find_field(start).piece.moved = false if (start[0] == 1 &&
+                                                    @board.find_field(start).piece.instance_of?(WhitePawn)) ||
+                                                    (start[0] == 6 &&
+                                                    @board.find_field(start).piece.instance_of(BlackPawn))
     play_turn(player)
   end
 

@@ -1,4 +1,6 @@
-require './lib/color.rb'
+# frozen_string_literal: true
+
+require './lib/color'
 
 class Player
   include Color

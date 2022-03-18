@@ -1,8 +1,10 @@
-require './lib/pieces/rook.rb'
-require './lib/pieces/knight.rb'
-require './lib/pieces/bishop.rb'
-require './lib/pieces/king.rb'
-require './lib/pieces/queen.rb'
+# frozen_string_literal: true
+
+require './lib/pieces/rook'
+require './lib/pieces/knight'
+require './lib/pieces/bishop'
+require './lib/pieces/king'
+require './lib/pieces/queen'
 
 module FieldFiller
   def fill_board

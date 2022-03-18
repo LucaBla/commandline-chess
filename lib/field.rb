@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Field
   attr_accessor :coordinate, :piece, :color, :top_field, :bottom_field, :left_field, :right_field, :capturable
 
@@ -19,7 +21,7 @@ class Field
   end
 
   def set_color
-    return '100' if (coordinate[0].even? && coordinate[1].even?) || (!coordinate[0].even? && !coordinate[1].even?)
+    return '100' if (coordinate[0].even? && coordinate[1].even?) || (coordinate[0].odd? && coordinate[1].odd?)
 
     '106'
   end

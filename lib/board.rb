@@ -1,8 +1,10 @@
-require './lib/field.rb'
-require './lib/pieces/pawn.rb'
-require './lib/field_filler.rb'
-require './lib/move_validator.rb'
-require './lib/pieces/red_dot.rb'
+# frozen_string_literal: true
+
+require './lib/field'
+require './lib/pieces/pawn'
+require './lib/field_filler'
+require './lib/move_validator'
+require './lib/pieces/red_dot'
 
 class Board
   include FieldFiller
@@ -139,7 +141,8 @@ class Board
       kick_en_passant(start_field.piece.color, destination_field) if start_field.piece.class <= Pawn
       force_move(start_field, destination_field)
       destination_field.piece.moved = true if destination_field.piece.class <= Pawn ||
-                                              destination_field.piece.class <= Rook || destination_field.piece.class <= King
+                                              destination_field.piece.class <= Rook ||
+                                              destination_field.piece.class <= King
       castling_move_rook(start_field, destination_field) if destination_field.piece.class <= King
       set_en_passant(start_field, destination_field) if destination_field.piece.class <= Pawn
     else
@@ -181,8 +184,8 @@ class Board
     pawn_class = Object.const_get("#{enemy_color}Pawn")
     enemy_color == 'Black' ? pawn_to_delete_field = destination_field.bottom_field : pawn_to_delete_field = destination_field.top_field
     pawn_to_delete_field.piece = nil if !pawn_to_delete_field.nil? && !pawn_to_delete_field.piece.nil? &&
-                                                  pawn_to_delete_field.piece.instance_of?(pawn_class) &&
-                                                  pawn_to_delete_field.piece.en_passant
+                                        pawn_to_delete_field.piece.instance_of?(pawn_class) &&
+                                        pawn_to_delete_field.piece.en_passant
     @last_deleted_piece = destination_field.bottom_field.piece
   end
 

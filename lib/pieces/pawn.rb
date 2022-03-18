@@ -1,5 +1,7 @@
-require './lib/pieces/piece.rb'
-require './lib/color.rb'
+# frozen_string_literal: true
+
+require './lib/pieces/piece'
+require './lib/color'
 
 class Pawn < Piece
   include Color

@@ -1,4 +1,6 @@
-require './lib/color.rb'
+# frozen_string_literal: true
+
+require './lib/color'
 module MoveValidator
   include Color
 
@@ -34,7 +36,7 @@ module MoveValidator
       end
       team.each do |piece_field|
         start_field.piece = nil
-        enemy_possible_moves += walkable_fields(piece_field, false) if !walkable_fields(piece_field, false).nil?
+        enemy_possible_moves += walkable_fields(piece_field, false) unless walkable_fields(piece_field, false).nil?
       end
       # adds the moves of the deleted pieces to enemy_possible_moves
       deleted_pieces.each do |e|
@@ -96,8 +98,10 @@ module MoveValidator
     root = king_field
     left_piece_field = root.left_field
     right_piece_field = root.right_field
-    left_piece_field = left_piece_field.left_field until !left_piece_field.piece.nil? || left_piece_field.left_field.nil?
-    right_piece_field = right_piece_field.right_field until !right_piece_field.piece.nil? || right_piece_field.right_field.nil?
+    left_piece_field = left_piece_field.left_field until !left_piece_field.piece.nil? ||
+                                                         left_piece_field.left_field.nil?
+    right_piece_field = right_piece_field.right_field until !right_piece_field.piece.nil? ||
+                                                            right_piece_field.right_field.nil?
 
     sol = []
     sol.push(left_piece_field) unless left_piece_field.nil?
