@@ -42,7 +42,7 @@ class Game
     puts "#{player.name} pls enter the Piece you want to move: (like a1 or h7)" if type == 'piece'
     puts "#{player.name} pls enter your destination: (like a1 or h7)" if type == 'destination'
     input = gets.chomp
-    return player_input(player, type) if input.length != 2 || !('a'..'h').include?(input[0]) || !('0'..'7').include?(input[1])
+    return player_input(player, type, start) if input.length != 2 || !('a'..'h').include?(input[0]) || !('0'..'7').include?(input[1])
 
     input = refactor_input(input)
     allowed_field?(input, player, type, start)
@@ -60,7 +60,7 @@ class Game
                                          (@board.find_field(input).piece.nil? ||
                                           @board.find_field(input).piece.color != player.color ||
                                           @board.walkable_fields(@board.find_field(input)).empty?)
-
+    puts start
     return player_input(player, type, start) if type == 'destination' &&
                                                 (@board.walkable_fields(@board.find_field(start)).empty? ||
                                                 !@board.walkable_fields(@board.find_field(start)).include?(@board.find_field(input)))

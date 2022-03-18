@@ -50,7 +50,7 @@ module MoveValidator
 
   def king_get_castle_move(start_field, allowed_fields)
     condition = can_castle?(start_field.piece.color)
-    p condition
+
     return allowed_fields if condition == false
 
     allowed_fields.push(start_field.left_field.left_field) if condition == 'left'
@@ -76,7 +76,7 @@ module MoveValidator
     return false if left_piece_field.piece.nil? && right_piece_field.piece.nil?
 
     return false unless left_piece_field.piece.class <= Rook || right_piece_field.piece.class <= Rook
-    p left_piece_field.piece.class <=> Rook
+
     return false if king_field.piece.moved == true
 
     atze = left_piece_field.piece.class <=> Rook
